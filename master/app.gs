@@ -7,12 +7,8 @@
  */
 
 const CONFIG = {
-  get SPREADSHEET_ID() {
-    return PropertiesService.getScriptProperties().getProperty('SPREADSHEET_ID');
-  },
-  get SECRET_KEY() {
-    return PropertiesService.getScriptProperties().getProperty('SECRET_KEY');
-  }
+  SPREADSHEET_ID: 'ISI_SPREADSHEET_ID_DISINI',
+  SECRET_KEY: 'ISI_SECRET_KEY_DISINI'  // HARUS SAMA DENGAN WORKER
 };
 
 function include(filename) {

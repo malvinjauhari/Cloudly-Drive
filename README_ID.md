@@ -44,7 +44,6 @@ Cloudly Drive/
 │   ├── workers.gs                    # CRUD Worker
 │   ├── activity.gs                   # Activity logs
 │   ├── utils.gs                      # Helper functions
-│   ├── setup.gs                      # Setup credentials
 │   ├── index.html                    # Template HTML utama
 │   ├── css.html                      # Styles
 │   ├── js-api.html                   # State & API calls
@@ -74,7 +73,7 @@ Cloudly Drive/
 2. Buat **Proyek Baru**
 3. Ganti kode default dengan isi file `worker/worker-code.gs`
 4. Tambahkan layanan **Drive API**: Klik **Services (+)** → **Drive API** → **Add**
-5. (Opsional) Set folder target via `PropertiesService` — lihat dokumentasi worker
+5. Edit bagian CONFIG di `worker-code.gs` dengan SECRET_KEY dan TARGET_FOLDER_ID (opsional)
 6. Deploy → **Deployment baru** → **Web App**
    - Execute as: **Me**
    - Who has access: **Anyone**
@@ -93,15 +92,13 @@ Cloudly Drive/
 
 1. Buka [script.google.com](https://script.google.com) dengan akun **Master** kamu
 2. Buat **Proyek Baru** dengan nama "Cloudly Drive"
-3. Buat file `setup.gs` dan jalankan:
+3. Buka `app.gs` dan edit bagian CONFIG:
 
 ```javascript
-function setupMasterCredentials() {
-  PropertiesService.getScriptProperties().setProperties({
-    'SPREADSHEET_ID': 'ID_SPREADSHEET_KAMU',
-    'SECRET_KEY': 'SECRET_KEY_KAMU'
-  });
-}
+const CONFIG = {
+  SPREADSHEET_ID: 'ID_SPREADSHEET_KAMU',
+  SECRET_KEY: 'SECRET_KEY_KAMU'  // HARUS SAMA DENGAN WORKER
+};
 ```
 
 4. Buat semua file dari folder `master/` (dengan nama yang sama)

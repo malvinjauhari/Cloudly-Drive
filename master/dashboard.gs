@@ -25,7 +25,12 @@ function getAppData() {
     }
   }
 
-  const filesData = ss.getSheetByName("FILES").getDataRange().getValues();
+  let filesSheet = ss.getSheetByName("FILES");
+  if (!filesSheet) {
+    filesSheet = ss.insertSheet("FILES");
+    filesSheet.appendRow(["FILE_ID","FILE_NAME","WORKER_ID","GOOGLE_FILE_ID","SIZE_BYTES","MIME_TYPE","UPLOADED_VIA","UPLOADED_AT","STATUS","CATEGORY"]);
+  }
+  const filesData = filesSheet.getDataRange().getValues();
   let files = [];
   for (let i = 1; i < filesData.length; i++) {
     const row = filesData[i];

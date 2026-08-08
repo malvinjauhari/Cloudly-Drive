@@ -198,16 +198,14 @@
               <br><em>Ini wajib agar worker bisa membaca kuota drive</em>
             </li>
             <li>
-              <strong>Set Folder Target (opsional):</strong>
-              <br>Jika ingin file masuk ke folder tertentu (bukan root drive), buat file <code>setup.gs</code> sementara:
-              <pre class="bg-gray-800 text-green-400 text-xs p-3 rounded-lg mt-2 overflow-x-auto"><code>function setup() {
-  PropertiesService.getScriptProperties().setProperties({
-    'SECRET_KEY': 'RAHASIA_MASTER_SAMA',
-    'TARGET_FOLDER_ID': 'ID_FOLDER_YANG_TADI'
-  });
-}</code></pre>
-              <p class="text-xs text-gray-500 mt-1">Jalankan fungsi <code>setup()</code> sekali, lalu hapus file setup.gs</p>
-              <p class="text-xs text-gray-500">Jika tidak diisi, file akan masuk ke Root Drive Worker</p>
+              <strong>Isi SECRET_KEY di Worker:</strong>
+              <br>Buka file <code>worker-code.gs</code>, temukan bagian CONFIG di atas:
+              <pre class="bg-gray-800 text-green-400 text-xs p-3 rounded-lg mt-2 overflow-x-auto"><code>const CONFIG = {
+  SECRET_KEY: 'ISI_SECRET_KEY_DISINI',
+  TARGET_FOLDER_ID: ''
+};</code></pre>
+              <p class="text-xs text-gray-500 mt-1">Ganti <code>ISI_SECRET_KEY_DISINI</code> dengan secret key yang sama dengan Master (bisa random seperti <code>MySecret123!</code>)</p>
+              <p class="text-xs text-gray-500">Jika ingin file masuk ke folder tertentu, isi <code>TARGET_FOLDER_ID</code>. Jika tidak, biarkan kosong (file masuk Root Drive).</p>
             </li>
             <li>
               <strong>Deploy:</strong>
@@ -243,15 +241,13 @@
               <br>Ganti nama project menjadi <code>Cloudly Drive</code>
             </li>
             <li>
-              <strong>Set Credentials dulu:</strong>
-              <br>Buat file baru bernama <code>setup.gs</code>, paste kode ini:
-              <pre class="bg-gray-800 text-green-400 text-xs p-3 rounded-lg mt-2 overflow-x-auto"><code>function setupMasterCredentials() {
-  PropertiesService.getScriptProperties().setProperties({
-    'SPREADSHEET_ID': 'ID_SPREADSHEET_KAMU',
-    'SECRET_KEY': 'RAHASIA_YANG_SAMA_DENGAN_WORKER'
-  });
-}</code></pre>
-              <p class="text-xs text-gray-500 mt-1">Ganti nilai placeholder, lalu jalankan fungsi <code>setupMasterCredentials()</code></p>
+              <strong>Isi credentials di Master:</strong>
+              <br>Buka file <code>app.gs</code>, temukan bagian CONFIG di atas:
+              <pre class="bg-gray-800 text-green-400 text-xs p-3 rounded-lg mt-2 overflow-x-auto"><code>const CONFIG = {
+  SPREADSHEET_ID: 'ISI_SPREADSHEET_ID_DISINI',
+  SECRET_KEY: 'ISI_SECRET_KEY_DISINI'
+};</code></pre>
+              <p class="text-xs text-gray-500 mt-1">Ganti placeholder dengan nilai yang benar. SECRET_KEY harus <strong>SAMA PERSIS</strong> dengan yang di Worker.</p>
             </li>
             <li>
               <strong>Paste semua file Master:</strong>
@@ -277,7 +273,6 @@
                 <div class="text-center"><span class="file-tag">js-upload.html</span></div>
                 <div class="text-center"><span class="file-tag">js-utils.html</span></div>
               </div>
-              <p class="text-xs text-gray-500 mt-2">* <code>setup.gs</code> boleh dihapus setelah setup selesai</p>
             </li>
             <li>
               <strong>Deploy:</strong>

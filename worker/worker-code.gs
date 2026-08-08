@@ -7,12 +7,8 @@
  */
 
 const CONFIG = {
-  get SECRET_KEY() {
-    return PropertiesService.getScriptProperties().getProperty('SECRET_KEY');
-  },
-  get TARGET_FOLDER_ID() {
-    return PropertiesService.getScriptProperties().getProperty('TARGET_FOLDER_ID') || "";
-  }
+  SECRET_KEY: 'ISI_SECRET_KEY_DISINI',
+  TARGET_FOLDER_ID: ''  // Kosongkan untuk Root Drive, atau isi Folder ID
 };
 
 /**
@@ -159,7 +155,7 @@ function verifySignature(payload) {
   // Cek masa berlaku request (Cegah serangan Replay)
   // Request ditolak jika usianya lebih dari 5 menit
   const now = new Date().getTime();
-  if (now - timestamp > 5 * 60 * 1000) {
+  if (now - timestamp > 30 * 60 * 1000) {
     return false; 
   }
 
