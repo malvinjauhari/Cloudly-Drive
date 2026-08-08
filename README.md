@@ -29,6 +29,56 @@ A self-hosted cloud storage manager that aggregates multiple Google Drive accoun
 - 📋 **Activity Logs** — Track all user actions and system events
 - 🔄 **Sync Workers** — Ping all workers to refresh quota data in real-time
 
+## 🚀 Easy Setup (Copy & Paste)
+
+For the fastest setup, download pre-built files from Google Drive:
+
+**[📁 Download Setup Files](https://drive.google.com/drive/u/0/folders/1TyaZTNGFIV0NlMmXzEjRK0pMg2l7HLap)**
+
+### Master Setup
+
+1. Open the link above → download **`Cloudly master.txt`**
+2. Open [script.google.com](https://script.google.com) with your Master account
+3. Create a New Project → open `Code.gs`
+4. **Select all** (Ctrl+A) → **Delete** → **Paste** the contents of `Cloudly master.txt`
+5. Edit the CONFIG section at the top:
+
+```javascript
+const CONFIG = {
+  SPREADSHEET_ID: 'YOUR_SPREADSHEET_ID',
+  SECRET_KEY: 'YOUR_SECRET_KEY'
+};
+```
+
+6. Rename the file to `app.gs`
+7. Create remaining files (`auth.gs`, `dashboard.gs`, etc.) from the `master/` folder
+8. Deploy → New Deployment → Web App
+
+### Worker Setup
+
+1. Open the link above → download **`Cloudly worker.txt`**
+2. Open [script.google.com](https://script.google.com) with your Worker account
+3. Create a New Project → open `Code.gs`
+4. **Select all** (Ctrl+A) → **Delete** → **Paste** the contents of `Cloudly worker.txt`
+5. Edit the CONFIG section at the top:
+
+```javascript
+const CONFIG = {
+  SECRET_KEY: 'YOUR_SECRET_KEY',        // MUST match Master
+  TARGET_FOLDER_ID: ''                  // Empty = Root Drive
+};
+```
+
+6. Add **Drive API**: Services (+) → Drive API → Add
+7. Deploy → New Deployment → Web App → copy the URL
+
+### Spreadsheet Setup
+
+1. Open the link above → download **`Cloudly Drive Config.xlsx`** (or use the one from `assets/`)
+2. Make a copy to your Google Drive
+3. Edit USERS, DRIVES, and SETTINGS sheets
+4. Copy the Spreadsheet ID from the URL and paste into Master CONFIG
+
 ## 🏗️ Architecture
 
 ```
@@ -195,56 +245,6 @@ const CONFIG = {
 4. Create all files from the `master/` folder (same filenames)
 5. Deploy → **New Deployment** → **Web App**
 6. Open the Web App URL and login!
-
-## 🚀 Easy Setup (Copy & Paste)
-
-For the fastest setup, download pre-built files from Google Drive:
-
-**[📁 Download Setup Files](https://drive.google.com/drive/u/0/folders/1TyaZTNGFIV0NlMmXzEjRK0pMg2l7HLap)**
-
-### Master Setup
-
-1. Open the link above → download **`Cloudly master.txt`**
-2. Open [script.google.com](https://script.google.com) with your Master account
-3. Create a New Project → open `Code.gs`
-4. **Select all** (Ctrl+A) → **Delete** → **Paste** the contents of `Cloudly master.txt`
-5. Edit the CONFIG section at the top:
-
-```javascript
-const CONFIG = {
-  SPREADSHEET_ID: 'YOUR_SPREADSHEET_ID',
-  SECRET_KEY: 'YOUR_SECRET_KEY'
-};
-```
-
-6. Rename the file to `app.gs`
-7. Create remaining files (`auth.gs`, `dashboard.gs`, etc.) from the `master/` folder
-8. Deploy → New Deployment → Web App
-
-### Worker Setup
-
-1. Open the link above → download **`Cloudly worker.txt`**
-2. Open [script.google.com](https://script.google.com) with your Worker account
-3. Create a New Project → open `Code.gs`
-4. **Select all** (Ctrl+A) → **Delete** → **Paste** the contents of `Cloudly worker.txt`
-5. Edit the CONFIG section at the top:
-
-```javascript
-const CONFIG = {
-  SECRET_KEY: 'YOUR_SECRET_KEY',        // MUST match Master
-  TARGET_FOLDER_ID: ''                  // Empty = Root Drive
-};
-```
-
-6. Add **Drive API**: Services (+) → Drive API → Add
-7. Deploy → New Deployment → Web App → copy the URL
-
-### Spreadsheet Setup
-
-1. Open the link above → download **`Cloudly Drive Config.xlsx`** (or use the one from `assets/`)
-2. Make a copy to your Google Drive
-3. Edit USERS, DRIVES, and SETTINGS sheets
-4. Copy the Spreadsheet ID from the URL and paste into Master CONFIG
 
 ## ⚙️ Configuration
 
