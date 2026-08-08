@@ -17,5 +17,5 @@ function handleTelegramWebhook(update) {
     if(settingsData[i][0] === "TELEGRAM_ADMIN_ID") adminId = settingsData[i][1].toString();
   }
   if (!token || !adminId || chatId !== adminId) return;
-  if (text.startsWith("/start")) UrlFetchApp.fetch(`https://api.telegram.org/bot${token}/sendMessage`, { method: "post", payload: { chat_id: chatId, text: "🤖 *unlidriveapps Aktif!*\n/status - Cek Kuota\n/upload - Buka Dashboard", parse_mode: "Markdown" }, muteHttpExceptions: true });
+  if (text.startsWith("/start")) UrlFetchApp.fetch(`https://api.telegram.org/bot${token}/sendMessage`, { method: "post", payload: { chat_id: chatId, text: "🤖 *Cloudly Drive Aktif!*\n/status - Cek Kuota\n/upload - Buka Dashboard", parse_mode: "Markdown" }, muteHttpExceptions: true });
 }

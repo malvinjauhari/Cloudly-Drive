@@ -107,7 +107,7 @@
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `unlidrive_${new Date().toISOString().slice(0, 10)}.zip`;
+          a.download = `cloudly_${new Date().toISOString().slice(0, 10)}.zip`;
           a.click();
           URL.revokeObjectURL(url);
           showToast(`${count} file berhasil di-zip`);

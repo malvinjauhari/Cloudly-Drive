@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panduan Setup - Cloudly Drive</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; }
+    .step-number {
+      width: 40px; height: 40px; min-width: 40px;
+      background: #2563eb; color: white; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 16px;
+    }
+    .step-card { border-left: 3px solid #2563eb; }
+    code {
+      background: #f1f5f9; color: #e11d48; padding: 2px 6px;
+      border-radius: 4px; font-size: 13px; font-family: 'Courier New', monospace;
+    }
+    .file-tag {
+      display: inline-block; background: #dbeafe; color: #1e40af;
+      padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;
+    }
+  </style>
+</head>
+<body class="text-gray-800 min-h-screen">
+
+  <!-- HEADER -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
+    <div class="max-w-4xl mx-auto px-6 py-4 flex items-center space-x-3">
+      <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+        <span class="text-white font-bold text-xl">C</span>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold text-gray-900">Cloudly Drive</h1>
+        <p class="text-xs text-gray-500">Panduan Setup & Deployment</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-6 py-8">
+
+    <!-- INTRO -->
+    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8">
+      <h2 class="font-bold text-blue-900 mb-2">Sebelum Memulai</h2>
+      <p class="text-sm text-blue-800 mb-3">Pastikan kamu sudah menyiapkan:</p>
+      <ul class="text-sm text-blue-800 space-y-1 list-disc list-inside">
+        <li>Akses ke <strong>Google Apps Script</strong> (script.google.com)</li>
+        <li>Minimal 2 akun Google: 1 Master + 1 Worker</li>
+        <li>File <code>Cloudly Drive Config.xlsx</code> dari folder <span class="file-tag">assets/</span></li>
+      </ul>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6 step-card">
+      <div class="flex items-start space-x-4">
+        <div class="step-number">1</div>
+        <div class="flex-1">
+          <h3 class="font-bold text-gray-900 text-lg mb-2">Siapkan Akun Master & Worker</h3>
+          <p class="text-sm text-gray-600 mb-4">Siapkan akun Google yang akan digunakan sebagai Master (pengelola) dan Worker (penyimpanan file).</p>
+          <div class="bg-gray-50 rounded-lg p-4 text-sm space-y-2">
+            <p><strong>Master:</strong> Akun utama yang mengelola semua file dan user. Bisa akun Google biasa.</p>
+            <p><strong>Worker:</strong> Akun Google Drive yang akan menyimpan file. Gunakan <strong>Shared Drive</strong> agar kuota tidak cepat penuh.</p>
+          </div>
+          <div class="mt-3 text-sm text-gray-600">
+            <p class="font-medium text-gray-700">Tips:</p>
+            <ul class="list-disc list-inside mt-1 space-y-1">
+              <li>Bisa pakai banyak Worker sekaligus (multi-drive)</li>
+              <li>Pastikan Worker sudah <strong>-share</strong> aksesnya ke Master</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6 step-card">
+      <div class="flex items-start space-x-4">
+        <div class="step-number">2</div>
+        <div class="flex-1">
+          <h3 class="font-bold text-gray-900 text-lg mb-2">Buat Folder di Masing-masing Akun</h3>
+          <p class="text-sm text-gray-600 mb-4">Buat folder khusus agar file terorganisir dan tidak berantakan.</p>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="bg-gray-50 rounded-lg p-4">
+              <p class="font-bold text-gray-700 mb-2">Di Akun Worker:</p>
+              <ol class="text-sm text-gray-600 space-y-1 list-decimal list-inside">
+                <li>Buka Google Drive</li>
+                <li>Buat folder baru, misal: <code>Cloudly Storage</code></li>
+                <li>Copy <strong>Folder ID</strong> dari URL (bagian setelah <code>/folders/</code>)</li>
+                <li>Share folder tersebut ke akun Master (Editor)</li>
+              </ol>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <p class="font-bold text-gray-700 mb-2">Di Akun Master:</p>
+              <ol class="text-sm text-gray-600 space-y-1 list-decimal list-inside">
+                <li>Buka Google Drive</li>
+                <li>Buat folder baru untuk backup opsional</li>
+                <li>Pastikan bisa mengakses folder Worker yang sudah di-share</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-sm text-yellow-800">
+            <strong>Penting:</strong> Folder ID Worker akan dimasukkan ke spreadsheet nanti. Contoh ID dari URL:
+            <br><code>https://drive.google.com/drive/folders/<strong>1ABC123def456...</strong></code>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6 step-card">
+      <div class="flex items-start space-x-4">
+        <div class="step-number">3</div>
+        <div class="flex-1">
+          <h3 class="font-bold text-gray-900 text-lg mb-2">Buat Spreadsheet Konfigurasi</h3>
+          <p class="text-sm text-gray-600 mb-4">Buat spreadsheet baru dari template yang sudah disediakan.</p>
+
+          <ol class="text-sm text-gray-600 space-y-3 list-decimal list-inside">
+            <li>Buka file <span class="file-tag">assets/Cloudly Drive Config.xlsx</span></li>
+            <li>Klik <strong>File → Buat Salinan</strong> (Make a Copy) ke akun Google kamu</li>
+            <li>Buat menjadi Google Spreadsheet</li>
+            <li>Edit sheet berikut:</li>
+          </ol>
+
+          <div class="mt-4 space-y-3">
+            <div class="bg-gray-50 rounded-lg p-4">
+              <p class="font-bold text-gray-700 mb-2">Sheet <code>USERS</code></p>
+              <p class="text-sm text-gray-600">Isi data user yang boleh login:</p>
+              <table class="w-full text-sm mt-2 border-collapse">
+                <thead><tr class="bg-gray-200 text-left"><th class="p-2">Username</th><th class="p-2">Password</th><th class="p-2">Nama</th><th class="p-2">Email</th><th class="p-2">Role</th></tr></thead>
+                <tbody><tr class="border-t"><td class="p-2">admin</td><td class="p-2">admin123</td><td class="p-2">Admin Utama</td><td class="p-2">admin@email.com</td><td class="p-2">admin</td></tr></tbody>
+              </table>
+            </div>
+
+            <div class="bg-gray-50 rounded-lg p-4">
+              <p class="font-bold text-gray-700 mb-2">Sheet <code>DRIVES</code></p>
+              <p class="text-sm text-gray-600">Isi data Worker yang sudah dibuat di Step 2:</p>
+              <table class="w-full text-sm mt-2 border-collapse">
+                <thead><tr class="bg-gray-200 text-left"><th class="p-2">Worker ID</th><th class="p-2">Name</th><th class="p-2">Email Worker</th><th class="p-2">Web App URL</th><th class="p-2">Status</th><th class="p-2">Quota</th><th class="p-2">Used</th><th class="p-2">Free</th></tr></thead>
+                <tbody><tr class="border-t"><td class="p-2">W-001</td><td class="p-2">Worker 1</td><td class="p-2">worker1@gmail.com</td><td class="p-2"><em>(diisi setelah deploy worker)</em></td><td class="p-2">ONLINE</td><td class="p-2">0</td><td class="p-2">0</td><td class="p-2">0</td></tr></tbody>
+              </table>
+              <p class="text-xs text-gray-500 mt-2">* URL Worker diisi nanti setelah deployment (Step 5)</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-lg p-4">
+              <p class="font-bold text-gray-700 mb-2">Sheet <code>SETTINGS</code></p>
+              <p class="text-sm text-gray-600">Konfigurasi aplikasi:</p>
+              <table class="w-full text-sm mt-2 border-collapse">
+                <thead><tr class="bg-gray-200 text-left"><th class="p-2">Key</th><th class="p-2">Value</th></tr></thead>
+                <tbody>
+                  <tr class="border-t"><td class="p-2">MAX_FILES_PER_UPLOAD</td><td class="p-2">10</td></tr>
+                  <tr class="border-t"><td class="p-2">MAX_FILE_SIZE_MB</td><td class="p-2">50</td></tr>
+                  <tr class="border-t"><td class="p-2">CATEGORIES</td><td class="p-2">Documents,Videos,Images,Backup</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="mt-4 bg-gray-50 rounded-lg p-3 text-sm text-gray-600">
+            <strong>Setelah edit, copy Spreadsheet ID</strong> dari URL:
+            <br><code>https://docs.google.com/spreadsheets/d/<strong>SpreadsheetsID</strong>/edit</code>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4 (Worker DULU) -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6 step-card">
+      <div class="flex items-start space-x-4">
+        <div class="step-number">4</div>
+        <div class="flex-1">
+          <div class="flex items-center space-x-2 mb-2">
+            <h3 class="font-bold text-gray-900 text-lg">Deploy Worker App (DULU)</h3>
+            <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">STEP INI DULU</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-4">Worker harus di-deploy terlebih dahulu karena URL-nya dibutuhkan di spreadsheet.</p>
+
+          <ol class="text-sm text-gray-600 space-y-4 list-decimal list-inside">
+            <li>
+              <strong>Buka akun Google Worker</strong> (akun yang tadi dibuat)
+              <br>Kemudian buka <code>script.google.com</code>
+            </li>
+            <li>
+              <strong>Buat Project Baru:</strong> Klik <strong>"Proyek baru"</strong> (New Project)
+            </li>
+            <li>
+              <strong>Paste kode worker:</strong>
+              <br>Buka file <span class="file-tag">worker/worker-code.gs</span> dari repository ini
+              <br>Copy seluruh isi file, paste ke <code>Code.gs</code> di Apps Script (replace semua isi default)
+            </li>
+            <li>
+              <strong>Tambahkan Drive API:</strong>
+              <br>Klik <strong>Services</strong> (+) di panel kiri → pilih <strong>Drive API</strong> → klik <strong>Tambahkan (Add)</strong>
+              <br><em>Ini wajib agar worker bisa membaca kuota drive</em>
+            </li>
+            <li>
+              <strong>Set Folder Target (opsional):</strong>
+              <br>Jika ingin file masuk ke folder tertentu (bukan root drive), buat file <code>setup.gs</code> sementara:
+              <pre class="bg-gray-800 text-green-400 text-xs p-3 rounded-lg mt-2 overflow-x-auto"><code>function setup() {
+  PropertiesService.getScriptProperties().setProperties({
+    'SECRET_KEY': 'RAHASIA_MASTER_SAMA',
+    'TARGET_FOLDER_ID': 'ID_FOLDER_YANG_TADI'
+  });
+}</code></pre>
+              <p class="text-xs text-gray-500 mt-1">Jalankan fungsi <code>setup()</code> sekali, lalu hapus file setup.gs</p>
+              <p class="text-xs text-gray-500">Jika tidak diisi, file akan masuk ke Root Drive Worker</p>
+            </li>
+            <li>
+              <strong>Deploy:</strong>
+              <br>Klik <strong>Deploy → Deployment baru → Web App</strong>
+              <br>Isi: Description = <code>Worker v1</code>, Execute as = <strong>Me</strong>, Who has access = <strong>Anyone</strong>
+              <br>Klik <strong>Deploy</strong> → Salin <strong>Web App URL</strong>
+            </li>
+            <li>
+              <strong>Simpan URL ke Spreadsheet:</strong>
+              <br>Kembali ke Google Spreadsheet → Sheet <code>DRIVES</code>
+              <br>Tempel Web App URL ke kolom <strong>Web App URL</strong> pada baris Worker yang sesuai
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5 (Master) -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6 step-card">
+      <div class="flex items-start space-x-4">
+        <div class="step-number">5</div>
+        <div class="flex-1">
+          <h3 class="font-bold text-gray-900 text-lg mb-2">Deploy Master App</h3>
+          <p class="text-sm text-gray-600 mb-4">Sekarang setup Master yang akan menjadi dashboard utama.</p>
+
+          <ol class="text-sm text-gray-600 space-y-4 list-decimal list-inside">
+            <li>
+              <strong>Buka akun Google Master</strong> (akun utama)
+              <br>Kemudian buka <code>script.google.com</code>
+            </li>
+            <li>
+              <strong>Buat Project Baru:</strong> Klik <strong>"Proyek baru"</strong> (New Project)
+              <br>Ganti nama project menjadi <code>Cloudly Drive</code>
+            </li>
+            <li>
+              <strong>Set Credentials dulu:</strong>
+              <br>Buat file baru bernama <code>setup.gs</code>, paste kode ini:
+              <pre class="bg-gray-800 text-green-400 text-xs p-3 rounded-lg mt-2 overflow-x-auto"><code>function setupMasterCredentials() {
+  PropertiesService.getScriptProperties().setProperties({
+    'SPREADSHEET_ID': 'ID_SPREADSHEET_KAMU',
+    'SECRET_KEY': 'RAHASIA_YANG_SAMA_DENGAN_WORKER'
+  });
+}</code></pre>
+              <p class="text-xs text-gray-500 mt-1">Ganti nilai placeholder, lalu jalankan fungsi <code>setupMasterCredentials()</code></p>
+            </li>
+            <li>
+              <strong>Paste semua file Master:</strong>
+              <br>Buka folder <span class="file-tag">master/</span> dari repository ini
+              <br>Untuk setiap file <code>*.gs</code> dan <code>*.html</code>, buat file baru di Apps Script dengan nama yang sama:
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3">
+                <div class="text-center"><span class="file-tag">app.gs</span></div>
+                <div class="text-center"><span class="file-tag">auth.gs</span></div>
+                <div class="text-center"><span class="file-tag">dashboard.gs</span></div>
+                <div class="text-center"><span class="file-tag">files.gs</span></div>
+                <div class="text-center"><span class="file-tag">settings.gs</span></div>
+                <div class="text-center"><span class="file-tag">users.gs</span></div>
+                <div class="text-center"><span class="file-tag">workers.gs</span></div>
+                <div class="text-center"><span class="file-tag">activity.gs</span></div>
+                <div class="text-center"><span class="file-tag">utils.gs</span></div>
+                <div class="text-center"><span class="file-tag">css.html</span></div>
+                <div class="text-center"><span class="file-tag">index.html</span></div>
+                <div class="text-center"><span class="file-tag">js-api.html</span></div>
+                <div class="text-center"><span class="file-tag">js-app.html</span></div>
+                <div class="text-center"><span class="file-tag">js-bulk.html</span></div>
+                <div class="text-center"><span class="file-tag">js-modals.html</span></div>
+                <div class="text-center"><span class="file-tag">js-ui.html</span></div>
+                <div class="text-center"><span class="file-tag">js-upload.html</span></div>
+                <div class="text-center"><span class="file-tag">js-utils.html</span></div>
+              </div>
+              <p class="text-xs text-gray-500 mt-2">* <code>setup.gs</code> boleh dihapus setelah setup selesai</p>
+            </li>
+            <li>
+              <strong>Deploy:</strong>
+              <br>Klik <strong>Deploy → Deployment baru → Web App</strong>
+              <br>Isi: Description = <code>Cloudly Drive v1</code>, Execute as = <strong>Me</strong>, Who has access = <strong>Anyone</strong>
+              <br>Klik <strong>Deploy</strong> → Salin <strong>Web App URL</strong>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6 step-card">
+      <div class="flex items-start space-x-4">
+        <div class="step-number">6</div>
+        <div class="flex-1">
+          <h3 class="font-bold text-gray-900 text-lg mb-2">Buka Dashboard & Login</h3>
+          <p class="text-sm text-gray-600 mb-4">Buka Web App URL Master di browser, lalu login dengan akun yang sudah dibuat di spreadsheet.</p>
+
+          <ol class="text-sm text-gray-600 space-y-2 list-decimal list-inside">
+            <li>Buka Web App URL Master di browser</li>
+            <li>Masukkan <strong>Username</strong> dan <strong>Password</strong> dari sheet USERS</li>
+            <li>Pilih akun Worker / "Semua Akun"</li>
+            <li>Dashboard siap digunakan!</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- DONE -->
+    <div class="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
+      <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-green-900 mb-2">Selesai!</h3>
+      <p class="text-sm text-green-700">Cloudly Drive sudah siap digunakan. Upload, kelola, dan download file dari satu dashboard.</p>
+    </div>
+
+    <!-- TROUBLESHOOT -->
+    <div class="mt-8 bg-white rounded-xl border border-gray-200 p-6">
+      <h3 class="font-bold text-gray-900 mb-4">Troubleshooting</h3>
+      <div class="space-y-3 text-sm text-gray-600">
+        <div>
+          <p class="font-medium text-gray-700">Worker tidak muncul / error connection:</p>
+          <ul class="list-disc list-inside ml-2 mt-1">
+            <li>Pastikan Worker sudah di-deploy dengan akses <strong>Anyone</strong></li>
+            <li>Pastikan URL Worker benar di spreadsheet (sheet DRIVES)</li>
+            <li>Pastikan Drive API sudah diaktifkan di Worker</li>
+          </ul>
+        </div>
+        <div>
+          <p class="font-medium text-gray-700">Upload gagal:</p>
+          <ul class="list-disc list-inside ml-2 mt-1">
+            <li>Pastikan <code>SECRET_KEY</code> di Master dan Worker <strong>sama</strong></li>
+            <li>Pastikan folder sharing sudah di-share ke akun Master</li>
+          </ul>
+        </div>
+        <div>
+          <p class="font-medium text-gray-700">Login gagal:</p>
+          <ul class="list-disc list-inside ml-2 mt-1">
+            <li>Pastikan <code>SPREADSHEET_ID</code> benar di Master</li>
+            <li>Pastikan data user sudah benar di sheet USERS</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="text-center py-6 text-xs text-gray-400">
+    <p>Cloudly Drive &copy; 2026 &mdash; Author: Alvin Jauhari</p>
+  </footer>
+
+</body>
+</html>

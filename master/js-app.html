@@ -46,7 +46,7 @@
     // AUTHENTICATION
     // ==========================================
     window.onload = () => {
-      const user = JSON.parse(localStorage.getItem('unlidrive_user'));
+      const user = JSON.parse(localStorage.getItem('cloudly_user'));
       if (user && user.isLoggedIn) {
         document.getElementById('loginScreen').style.display = 'none';
         applyUserProfile(user.data);
@@ -61,7 +61,7 @@
       btn.innerHTML = `<div class="loader w-5 h-5 border-white border-t-blue-200"></div>`;
       google.script.run.withSuccessHandler((res) => {
         if (res.status === 'success') {
-          localStorage.setItem('unlidrive_user', JSON.stringify({ isLoggedIn: true, data: res.user }));
+          localStorage.setItem('cloudly_user', JSON.stringify({ isLoggedIn: true, data: res.user }));
           applyUserProfile(res.user);
           document.getElementById('loginStep1').classList.add('hidden');
           document.getElementById('loginStep2').classList.remove('hidden');
@@ -82,8 +82,8 @@
     }
 
     function selectMainAccount(id, name) {
-      localStorage.setItem('unlidrive_main_account', id);
-      localStorage.setItem('unlidrive_main_name', name);
+      localStorage.setItem('cloudly_main_account', id);
+      localStorage.setItem('cloudly_main_name', name);
       activeMainAccount = id;
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('activeAccountName').innerText = name;
@@ -101,9 +101,9 @@
     }
 
     function logout() {
-      localStorage.removeItem('unlidrive_user');
-      localStorage.removeItem('unlidrive_main_account');
-      localStorage.removeItem('unlidrive_main_name');
+      localStorage.removeItem('cloudly_user');
+      localStorage.removeItem('cloudly_main_account');
+      localStorage.removeItem('cloudly_main_name');
       document.getElementById('loginScreen').style.display = 'flex';
       document.getElementById('loginStep2').classList.add('hidden');
       document.getElementById('loginStep1').classList.remove('hidden');
@@ -120,7 +120,7 @@
       document.getElementById('userNameDisplay').innerText = userData.name;
       document.getElementById('userEmailDisplay').innerText = userData.email;
       document.getElementById('userInitial').innerText = userData.name.charAt(0).toUpperCase();
-      const savedName = localStorage.getItem('unlidrive_main_name');
+      const savedName = localStorage.getItem('cloudly_main_name');
       if (savedName) {
         document.getElementById('activeAccountName').innerText = savedName;
         const mobileName = document.getElementById('activeAccountNameMobile');

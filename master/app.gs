@@ -1,7 +1,7 @@
 /**
  * =========================================================
  * VIRTUAL MULTI-DRIVE STORAGE MANAGER - MASTER APP (PROD V6)
- * NAMA APLIKASI: unlidriveapps
+ * NAMA APLIKASI: Cloudly Drive
  * FITUR: Dynamic Login, Multi-File Upload, Settings Panel, Users/Workers CRUD
  * =========================================================
  */
@@ -22,7 +22,7 @@ function include(filename) {
 function doGet(e) {
   const html = HtmlService.createTemplateFromFile('index');
   return html.evaluate()
-      .setTitle('unlidriveapps - Dashboard')
+      .setTitle('Cloudly Drive - Dashboard')
       .addMetaTag('viewport', 'width=device-width, initial-scale=1')
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
