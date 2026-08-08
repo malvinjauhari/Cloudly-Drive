@@ -56,7 +56,7 @@
       }).saveUser(null, data);
     }
     function deleteUser(username) {
-      openConfirmModal('Hapus User', `Hapus akses user ${username}?`, 'Hapus', 'bg-red-600', () => {
+      openConfirmModal('Hapus User', "Hapus akses user " + username + "?", 'Hapus', 'bg-red-600', () => {
         google.script.run.withSuccessHandler(res => { showToast(res.message); fetchSettings(); }).deleteUser(username);
       });
     }
@@ -81,7 +81,7 @@
       }).saveWorker(null, data);
     }
     function deleteWorker(id) {
-      openConfirmModal('Hapus Worker', `Hapus konfigurasi worker ${id}?`, 'Hapus', 'bg-red-600', () => {
+      openConfirmModal('Hapus Worker', "Hapus konfigurasi worker " + id + "?", 'Hapus', 'bg-red-600', () => {
         google.script.run.withSuccessHandler(res => { showToast(res.message); fetchSettings(); fetchData(); }).deleteWorker(id);
       });
     }

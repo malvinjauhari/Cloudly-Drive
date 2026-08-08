@@ -6,14 +6,13 @@
  * dari Master untuk membaca kuota, upload, dan delete file.
  */
 
-const CONFIG = {  
-  // SECRET_KEY harus SAMA PERSIS dengan yang akan dipasang di Master nanti.
-  // Jangan berikan key ini kepada siapapun.
-  SECRET_KEY: "R4hasiaWorkerSatu2026!", 
-  
-  // Kosongkan jika ingin file masuk ke Root Drive akun ini.
-  // Jika ingin dirapikan, buat folder di Drive, lalu paste ID-nya di sini.
-  TARGET_FOLDER_ID: "14DTteMDZ6v37tegRD5ArtV_yTXAMtrvn" 
+const CONFIG = {
+  get SECRET_KEY() {
+    return PropertiesService.getScriptProperties().getProperty('SECRET_KEY');
+  },
+  get TARGET_FOLDER_ID() {
+    return PropertiesService.getScriptProperties().getProperty('TARGET_FOLDER_ID') || "";
+  }
 };
 
 /**

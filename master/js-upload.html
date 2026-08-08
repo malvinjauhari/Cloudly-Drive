@@ -18,30 +18,30 @@
 
     function handleFilesSelected(files) {
       if (files.length > appSettings.maxFiles) {
-        showToast(`Maksimal ${appSettings.maxFiles} file per upload!`, true);
+        showToast("Maksimal " + appSettings.maxFiles + " file per upload!", true);
         return;
       }
       selectedFilesToUpload = Array.from(files).filter(f => f.size <= appSettings.maxSizeMB * 1024 * 1024);
       if (selectedFilesToUpload.length < files.length) {
-        showToast(`Beberapa file diabaikan karena melebihi ${appSettings.maxSizeMB}MB`, true);
+        showToast("Beberapa file diabaikan karena melebihi " + appSettings.maxSizeMB + "MB", true);
       }
       if (selectedFilesToUpload.length === 0) return;
 
       document.getElementById('uploadFileCount').innerText = selectedFilesToUpload.length;
       const list = document.getElementById('uploadFileList');
       list.innerHTML = selectedFilesToUpload.map(f => {
-        return `<div class="flex items-center justify-between py-1 px-2 bg-gray-50 rounded"><span class="truncate text-gray-700">${f.name}</span><span class="text-gray-400 text-xs ml-2">${formatBytes(f.size)}</span></div>`;
+        return '<div class="flex items-center justify-between py-1 px-2 bg-gray-50 rounded"><span class="truncate text-gray-700">' + f.name + '</span><span class="text-gray-400 text-xs ml-2">' + formatBytes(f.size) + '</span></div>';
       }).join('');
       document.getElementById('uploadModal').classList.remove('hidden');
     }
 
     function populateUploadFilters() {
       const catSelect = document.getElementById('modalCategory');
-      catSelect.innerHTML = appData.categories.map(c => `<option value="${c}" ${c === currentCategory ? 'selected' : ''}>${c}</option>`).join('');
+      catSelect.innerHTML = appData.categories.map(c => '<option value="' + c + '" ' + (c === currentCategory ? 'selected' : '') + '>' + c + '</option>').join('');
 
       const driveSelect = document.getElementById('modalDrive');
-      driveSelect.innerHTML = `<option value="AUTO">Auto (Pilih Space Terbesar)</option>` +
-        appData.workers.filter(w => w.status === 'ONLINE').map(w => `<option value="${w.id}">${w.name} (Free: ${formatBytes(w.free_bytes)})</option>`).join('');
+      driveSelect.innerHTML = '<option value="AUTO">Auto (Pilih Space Terbesar)</option>' +
+        appData.workers.filter(w => w.status === 'ONLINE').map(w => '<option value="' + w.id + '">' + w.name + ' (Free: ' + formatBytes(w.free_bytes) + ')</option>').join('');
     }
 
     async function startMultiUpload() {
@@ -58,9 +58,9 @@
       for (let i = 0; i < selectedFilesToUpload.length; i++) {
         if (!isUploading) break;
         const file = selectedFilesToUpload[i];
-        document.getElementById('progressCount').innerText = `${i + 1}/${selectedFilesToUpload.length}`;
+        document.getElementById('progressCount').innerText = (i + 1) + "/" + selectedFilesToUpload.length;
         document.getElementById('progressFileName').innerText = file.name;
-        document.getElementById('progressBar').style.width = `${((i + 1) / selectedFilesToUpload.length) * 100}%`;
+        document.getElementById('progressBar').style.width = ((i + 1) / selectedFilesToUpload.length) * 100 + "%";
         document.getElementById('progressStatus').innerText = "Membaca file...";
 
         try {
@@ -69,9 +69,9 @@
           const res = await new Promise((resolve) => {
             google.script.run.withSuccessHandler(resolve).withFailureHandler(() => resolve({ status: 'error', message: 'Upload timeout' })).processUploadFromWeb(file.name, file.type, base64Data.split(',')[1], workerId === 'AUTO' ? 'AUTO' : 'SPECIFIC', workerId === 'AUTO' ? null : workerId, category);
           });
-          resultsDiv.innerHTML += `<div class="text-${res.status === 'success' ? 'green' : 'red'}-600">✓ ${file.name}: ${res.message}</div>`;
+          resultsDiv.innerHTML += '<div class="text-' + (res.status === 'success' ? 'green' : 'red') + '-600">' + file.name + ': ' + res.message + '</div>';
         } catch (e) {
-          resultsDiv.innerHTML += `<div class="text-red-600">✕ ${file.name}: Gagal upload</div>`;
+          resultsDiv.innerHTML += '<div class="text-red-600">' + file.name + ': Gagal upload</div>';
         }
       }
 

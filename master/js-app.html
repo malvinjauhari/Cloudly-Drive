@@ -36,7 +36,7 @@
       document.getElementById('confirmModalDesc').textContent = desc;
       const btn = document.getElementById('btnConfirmAction');
       btn.textContent = btnText;
-      btn.className = `px-5 py-2 text-white hover:opacity-90 rounded-lg font-medium ${btnColor}`;
+      btn.className = "px-5 py-2 text-white hover:opacity-90 rounded-lg font-medium " + btnColor;
       btn.onclick = () => { closeConfirmModal(); action(); };
       document.getElementById('confirmModal').classList.remove('hidden');
     }
@@ -59,7 +59,7 @@
       const u = document.getElementById('loginUser').value;
       const p = document.getElementById('loginPass').value;
       const btn = document.getElementById('btnLogin');
-      btn.innerHTML = `<div class="loader w-5 h-5 border-white border-t-blue-200"></div>`;
+      btn.innerHTML = "<div class=\"loader w-5 h-5 border-white border-t-blue-200\"></div>";
       google.script.run.withSuccessHandler((res) => {
         if (res.status === 'success') {
           localStorage.setItem('cloudly_user', JSON.stringify({ isLoggedIn: true, data: res.user }));
@@ -68,7 +68,7 @@
           document.getElementById('loginStep2').classList.remove('hidden');
           renderDriveSelection(res.drives);
         } else {
-          btn.innerHTML = `<span>Login</span>`;
+          btn.innerHTML = "<span>Login</span>";
           showToast(res.message, true);
         }
       }).verifyLogin(u, p);
@@ -76,9 +76,9 @@
 
     function renderDriveSelection(drives) {
       const list = document.getElementById('driveSelectionList');
-      list.innerHTML = `<div onclick="selectMainAccount('ALL', 'Semua Akun')" class="p-4 border border-blue-200 bg-blue-50 rounded-xl cursor-pointer hover:bg-blue-100 transition"><h3 class="font-bold text-blue-800">Tampilkan Semua Drive</h3><p class="text-xs text-blue-600">Gabungkan semua file dari semua storage</p></div>`;
+      list.innerHTML = "<div onclick=\"selectMainAccount('ALL', 'Semua Akun')\" class=\"p-4 border border-blue-200 bg-blue-50 rounded-xl cursor-pointer hover:bg-blue-100 transition\"><h3 class=\"font-bold text-blue-800\">Tampilkan Semua Drive</h3><p class=\"text-xs text-blue-600\">Gabungkan semua file dari semua storage</p></div>";
       drives.forEach(d => {
-        list.innerHTML += `<div onclick="selectMainAccount('${d.id}', '${d.name}')" class="p-4 border border-gray-200 rounded-xl cursor-pointer hover:border-blue-400 hover:shadow-sm transition"><h3 class="font-bold text-gray-900">${d.name}</h3><p class="text-xs text-gray-500">${d.email} • Free: ${formatBytes(d.free_bytes)}</p></div>`;
+        list.innerHTML += "<div onclick=\"selectMainAccount('" + d.id + "', '" + d.name + "')\" class=\"p-4 border border-gray-200 rounded-xl cursor-pointer hover:border-blue-400 hover:shadow-sm transition\"><h3 class=\"font-bold text-gray-900\">" + d.name + "</h3><p class=\"text-xs text-gray-500\">" + d.email + " • Free: " + formatBytes(d.free_bytes) + "</p></div>";
       });
     }
 
@@ -110,7 +110,7 @@
       document.getElementById('loginStep1').classList.remove('hidden');
       document.getElementById('loginUser').value = '';
       document.getElementById('loginPass').value = '';
-      document.getElementById('btnLogin').innerHTML = `<span>Login</span>`;
+      document.getElementById('btnLogin').innerHTML = "<span>Login</span>";
     }
 
     function confirmLogout() {
@@ -174,7 +174,7 @@
     function openPreview(fileId, fileName) {
       document.getElementById('previewTitle').innerText = fileName;
       document.getElementById('previewLoader').style.display = 'flex';
-      document.getElementById('previewFrame').src = `https://drive.google.com/file/d/${fileId}/preview`;
+      document.getElementById('previewFrame').src = "https://drive.google.com/file/d/" + fileId + "/preview";
       document.getElementById('previewModal').classList.remove('hidden');
     }
 

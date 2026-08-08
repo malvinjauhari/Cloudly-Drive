@@ -8,14 +8,14 @@
       const colors = ['text-orange-500', 'text-yellow-500', 'text-green-500', 'text-blue-500', 'text-purple-500', 'text-pink-500'];
       appData.categories.forEach((cat, idx) => {
         const color = colors[idx % colors.length];
-        grid.innerHTML += `<div onclick="filterCategory('${cat}')" class="cursor-pointer border border-gray-200 rounded-2xl p-5 flex flex-col items-center justify-center hover:shadow-md hover:border-blue-300 transition bg-white group"><svg class="w-12 h-12 ${color} mb-2 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg><h3 class="font-semibold text-gray-800 text-sm truncate w-full text-center">${cat}</h3></div>`;
+        grid.innerHTML += "<div onclick=\"filterCategory('" + cat + "')\" class=\"cursor-pointer border border-gray-200 rounded-2xl p-5 flex flex-col items-center justify-center hover:shadow-md hover:border-blue-300 transition bg-white group\"><svg class=\"w-12 h-12 " + color + " mb-2 group-hover:scale-110 transition-transform\" fill=\"currentColor\" viewBox=\"0 0 20 20\"><path d=\"M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z\"></path></svg><h3 class=\"font-semibold text-gray-800 text-sm truncate w-full text-center\">" + cat + "</h3></div>";
       });
-      grid.innerHTML += `<div onclick="document.getElementById('addCategoryModal').classList.remove('hidden')" class="cursor-pointer border-2 border-dashed border-gray-300 rounded-2xl p-5 flex flex-col items-center justify-center hover:bg-gray-50 transition bg-white"><div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-2 text-gray-500"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></div><h3 class="font-semibold text-gray-500 text-sm">Add Category</h3></div>`;
+      grid.innerHTML += "<div onclick=\"document.getElementById('addCategoryModal').classList.remove('hidden')\" class=\"cursor-pointer border-2 border-dashed border-gray-300 rounded-2xl p-5 flex flex-col items-center justify-center hover:bg-gray-50 transition bg-white\"><div class=\"w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-2 text-gray-500\"><svg class=\"w-6 h-6\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 4v16m8-8H4\"></path></svg></div><h3 class=\"font-semibold text-gray-500 text-sm\">Add Category</h3></div>";
     }
 
     function filterCategory(cat) {
       currentCategory = cat;
-      document.getElementById('activeFilterText').textContent = cat ? `Kategori: ${cat}` : '';
+      document.getElementById('activeFilterText').textContent = cat ? "Kategori: " + cat : '';
       renderFiles();
     }
 
@@ -25,7 +25,7 @@
       updateSelectAllState();
 
       if (files.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-400">Tidak ada file ditemukan.</td></tr>`;
+        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-gray-400">Tidak ada file ditemukan.</td></tr>';
         return;
       }
 
@@ -38,16 +38,7 @@
         else if (f.mime_type.includes('video')) iconColor = "text-purple-500";
         else if (f.mime_type.includes('pdf')) iconColor = "text-red-500";
 
-        tbody.innerHTML += `
-          <tr class="border-b border-gray-50 hover:bg-gray-50 transition group">
-            <td class="p-4"><input type="checkbox" onchange="toggleFileSelect('${f.file_id}')" class="w-4 h-4 rounded border-gray-300" ${isChecked}></td>
-            <td class="p-4 min-w-[200px]"><div class="flex items-center space-x-3"><svg class="w-5 h-5 ${iconColor} flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path></svg><span onclick="window.open('https://drive.google.com/file/d/${f.google_file_id}/view', '_blank')" class="font-medium text-gray-900 truncate block w-full max-w-xs cursor-pointer hover:text-blue-600 transition" title="${f.file_name}">${f.file_name}</span></div></td>
-            <td class="p-4"><span class="px-2 py-1 bg-gray-100 rounded-md text-xs text-gray-600 font-medium whitespace-nowrap">${f.category}</span></td>
-            <td class="p-4 text-gray-500 text-xs whitespace-nowrap">${formatBytes(f.size_bytes)}</td>
-            <td class="p-4 text-gray-500 text-xs flex items-center space-x-2 whitespace-nowrap"><div class="w-4 h-4 rounded-full bg-blue-100 flex items-center justify-center text-[8px] text-blue-700">D</div><span class="truncate w-24">${workerName}</span></td>
-            <td class="p-4 text-center"><div class="flex justify-center space-x-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition"><button onclick="openPreview('${f.google_file_id}', '${f.file_name}')" class="p-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-md" title="Preview"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button><button onclick="window.open('https://drive.google.com/uc?export=download&id=${f.google_file_id}', '_blank')" class="p-1.5 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-md" title="Download"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button><button onclick="deleteFileSingle('${f.file_id}')" class="p-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md" title="Hapus"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div></td>
-          </tr>
-        `;
+        tbody.innerHTML += "<tr class=\"border-b border-gray-50 hover:bg-gray-50 transition group\"><td class=\"p-4\"><input type=\"checkbox\" onchange=\"toggleFileSelect('" + f.file_id + "')\" class=\"w-4 h-4 rounded border-gray-300\" " + isChecked + "></td><td class=\"p-4 min-w-[200px]\"><div class=\"flex items-center space-x-3\"><svg class=\"w-5 h-5 " + iconColor + " flex-shrink-0\" fill=\"currentColor\" viewBox=\"0 0 20 20\"><path fill-rule=\"evenodd\" d=\"M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z\" clip-rule=\"evenodd\"></path></svg><span onclick=\"window.open('https://drive.google.com/file/d/" + f.google_file_id + "/view', '_blank')\" class=\"font-medium text-gray-900 truncate block w-full max-w-xs cursor-pointer hover:text-blue-600 transition\" title=\"" + f.file_name + "\">" + f.file_name + "</span></div></td><td class=\"p-4\"><span class=\"px-2 py-1 bg-gray-100 rounded-md text-xs text-gray-600 font-medium whitespace-nowrap\">" + f.category + "</span></td><td class=\"p-4 text-gray-500 text-xs whitespace-nowrap\">" + formatBytes(f.size_bytes) + "</td><td class=\"p-4 text-gray-500 text-xs flex items-center space-x-2 whitespace-nowrap\"><div class=\"w-4 h-4 rounded-full bg-blue-100 flex items-center justify-center text-[8px] text-blue-700\">D</div><span class=\"truncate w-24\">" + workerName + "</span></td><td class=\"p-4 text-center\"><div class=\"flex justify-center space-x-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition\"><button onclick=\"openPreview('" + f.google_file_id + "', '" + f.file_name + "')\" class=\"p-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-md\" title=\"Preview\"><svg class=\"w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 12a3 3 0 11-6 0 3 3 0 016 0z\"></path><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z\"></path></svg></button><button onclick=\"window.open('https://drive.google.com/uc?export=download&id=" + f.google_file_id + "', '_blank')\" class=\"p-1.5 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-md\" title=\"Download\"><svg class=\"w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4\"></path></svg></button><button onclick=\"deleteFileSingle('" + f.file_id + "')\" class=\"p-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md\" title=\"Hapus\"><svg class=\"w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16\"></path></svg></button></div></td></tr>";
       });
     }
 
@@ -62,7 +53,7 @@
       appData.workers.forEach(w => {
         const pct = w.quota_bytes === 0 ? 0 : (w.used_bytes / w.quota_bytes) * 100;
         let colorClass = pct > 80 ? 'bg-red-500' : (pct > 50 ? 'bg-yellow-500' : 'bg-green-500');
-        grid.innerHTML += `<div class="border border-gray-200 rounded-xl p-6 bg-white"><div class="flex items-center space-x-3 mb-4"><div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M5.5 16a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 16h-8z"></path></svg></div><div><h4 class="font-bold text-gray-900">Google Drive</h4><p class="text-xs text-gray-500">${w.name} • ${w.email}</p></div></div><div class="flex justify-between text-xs text-gray-500 mb-1"><span><span class="inline-block w-2 h-2 rounded-full ${colorClass} mr-1"></span>storage</span><span>${Math.round(pct)}%</span></div><div class="w-full bg-gray-100 rounded-full h-1.5 mb-2"><div class="${colorClass} h-1.5 rounded-full" style="width: ${pct}%"></div></div><div class="flex justify-between text-xs text-gray-500"><span>${formatBytes(w.used_bytes)} / ${formatBytes(w.quota_bytes)}</span><span>Available ${formatBytes(w.free_bytes)}</span></div></div>`;
+        grid.innerHTML += "<div class=\"border border-gray-200 rounded-xl p-6 bg-white\"><div class=\"flex items-center space-x-3 mb-4\"><div class=\"w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center\"><svg class=\"w-6 h-6\" fill=\"currentColor\" viewBox=\"0 0 20 20\"><path d=\"M5.5 16a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 16h-8z\"></path></svg></div><div><h4 class=\"font-bold text-gray-900\">Google Drive</h4><p class=\"text-xs text-gray-500\">" + w.name + " • " + w.email + "</p></div></div><div class=\"flex justify-between text-xs text-gray-500 mb-1\"><span><span class=\"inline-block w-2 h-2 rounded-full " + colorClass + " mr-1\"></span>storage</span><span>" + Math.round(pct) + "%</span></div><div class=\"w-full bg-gray-100 rounded-full h-1.5 mb-2\"><div class=\"" + colorClass + " h-1.5 rounded-full\" style=\"width: " + pct + "%\"></div></div><div class=\"flex justify-between text-xs text-gray-500\"><span>" + formatBytes(w.used_bytes) + " / " + formatBytes(w.quota_bytes) + "</span><span>Available " + formatBytes(w.free_bytes) + "</span></div></div>";
       });
     }
 
@@ -71,17 +62,7 @@
       tbody.innerHTML = '';
       settingsUsers.forEach(u => {
         const roleColor = u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700';
-        tbody.innerHTML += `
-          <tr class="border-b border-gray-50 hover:bg-gray-50">
-            <td class="p-4 font-medium">${u.username}</td>
-            <td class="p-4">${u.name}</td>
-            <td class="p-4">${u.email}</td>
-            <td class="p-4"><span class="px-2 py-1 text-xs rounded-full ${roleColor}">${u.role}</span></td>
-            <td class="p-4 text-center">
-              <button onclick="deleteUser('${u.username}')" class="p-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md text-xs">Hapus</button>
-            </td>
-          </tr>
-        `;
+        tbody.innerHTML += "<tr class=\"border-b border-gray-50 hover:bg-gray-50\"><td class=\"p-4 font-medium\">" + u.username + "</td><td class=\"p-4\">" + u.name + "</td><td class=\"p-4\">" + u.email + "</td><td class=\"p-4\"><span class=\"px-2 py-1 text-xs rounded-full " + roleColor + "\">" + u.role + "</span></td><td class=\"p-4 text-center\"><button onclick=\"deleteUser('" + u.username + "')\" class=\"p-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md text-xs\">Hapus</button></td></tr>";
       });
     }
 
@@ -90,18 +71,7 @@
       tbody.innerHTML = '';
       settingsWorkers.forEach(w => {
         const statusColor = w.status === 'ONLINE' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
-        tbody.innerHTML += `
-          <tr class="border-b border-gray-50 hover:bg-gray-50">
-            <td class="p-4 font-mono text-xs">${w.id}</td>
-            <td class="p-4 font-medium">${w.name}</td>
-            <td class="p-4 text-sm">${w.email}</td>
-            <td class="p-4 text-xs text-gray-500 max-w-[200px] truncate" title="${w.url}">${w.url}</td>
-            <td class="p-4"><span class="px-2 py-1 text-xs rounded-full ${statusColor}">${w.status}</span></td>
-            <td class="p-4 text-center">
-              <button onclick="deleteWorker('${w.id}')" class="p-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md text-xs">Hapus</button>
-            </td>
-          </tr>
-        `;
+        tbody.innerHTML += "<tr class=\"border-b border-gray-50 hover:bg-gray-50\"><td class=\"p-4 font-mono text-xs\">" + w.id + "</td><td class=\"p-4 font-medium\">" + w.name + "</td><td class=\"p-4 text-sm\">" + w.email + "</td><td class=\"p-4 text-xs text-gray-500 max-w-[200px] truncate\" title=\"" + w.url + "\">" + w.url + "</td><td class=\"p-4\"><span class=\"px-2 py-1 text-xs rounded-full " + statusColor + "\">" + w.status + "</span></td><td class=\"p-4 text-center\"><button onclick=\"deleteWorker('" + w.id + "')\" class=\"p-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md text-xs\">Hapus</button></td></tr>";
       });
     }
 
@@ -110,16 +80,7 @@
       tbody.innerHTML = '';
       if (activityLogs.length === 0) tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-400">Belum ada aktivitas.</td></tr>';
       activityLogs.forEach(l => {
-        tbody.innerHTML += `
-          <tr class="border-b border-gray-50 hover:bg-gray-50 text-xs">
-            <td class="p-4">${l.timestamp}</td>
-            <td class="p-4">${l.user}</td>
-            <td class="p-4">${l.action}</td>
-            <td class="p-4">${l.target}</td>
-            <td class="p-4 font-bold ${l.status === 'SUCCESS' ? 'text-green-600' : 'text-red-600'}">${l.status}</td>
-            <td class="p-4 text-gray-500">${l.detail}</td>
-          </tr>
-        `;
+        tbody.innerHTML += "<tr class=\"border-b border-gray-50 hover:bg-gray-50 text-xs\"><td class=\"p-4\">" + l.timestamp + "</td><td class=\"p-4\">" + l.user + "</td><td class=\"p-4\">" + l.action + "</td><td class=\"p-4\">" + l.target + "</td><td class=\"p-4 font-bold " + (l.status === 'SUCCESS' ? 'text-green-600' : 'text-red-600') + "\">" + l.status + "</td><td class=\"p-4 text-gray-500\">" + l.detail + "</td></tr>";
       });
     }
 </script>

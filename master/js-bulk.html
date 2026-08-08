@@ -44,7 +44,7 @@
       const count = document.getElementById('bulkSelectedCount');
       if (selectedFileIds.length === 0) { bar.classList.add('hidden'); return; }
       bar.classList.remove('hidden');
-      count.textContent = `${selectedFileIds.length} file dipilih`;
+      count.textContent = selectedFileIds.length + " file dipilih";
       if (window.innerWidth < 768) bar.style.bottom = '56px';
       else bar.style.bottom = '0';
     }
@@ -60,19 +60,19 @@
     // ==========================================
     function bulkDeleteFiles() {
       const count = selectedFileIds.length;
-      openConfirmModal('Hapus File', `Hapus ${count} file secara permanen?`, 'Hapus', 'bg-red-600', () => {
+      openConfirmModal('Hapus File', "Hapus " + count + " file secara permanen?", 'Hapus', 'bg-red-600', () => {
         const snackbar = document.getElementById('deleteSnackbar');
         const msgEl = document.getElementById('deleteSnackbarMsg');
         const loader = document.getElementById('deleteSnackbarLoader');
         snackbar.classList.remove('hidden', 'snackbar-exit');
         snackbar.classList.add('snackbar-enter');
-        msgEl.textContent = `Menghapus ${count} file...`;
+        msgEl.textContent = "Menghapus " + count + " file...";
         loader.className = 'loader-white';
         const filesToDelete = [...selectedFileIds];
         clearSelection();
         google.script.run.withSuccessHandler((res) => {
           loader.className = 'hidden';
-          msgEl.textContent = `✓ ${res.success} file dihapus, ${res.failed} gagal`;
+          msgEl.textContent = res.success + " file dihapus, " + res.failed + " gagal";
           setTimeout(() => { snackbar.classList.add('hidden'); fetchData(); }, 2000);
         }).withFailureHandler((err) => {
           loader.className = 'hidden';
@@ -108,10 +108,10 @@
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `cloudly_${new Date().toISOString().slice(0, 10)}.zip`;
+          a.download = "cloudly_" + new Date().toISOString().slice(0, 10) + ".zip";
           a.click();
           URL.revokeObjectURL(url);
-          showToast(`${count} file berhasil di-zip`);
+          showToast(count + " file berhasil di-zip");
           downloadBtn.textContent = originalText;
           downloadBtn.disabled = false;
           bulkDownloading = false;

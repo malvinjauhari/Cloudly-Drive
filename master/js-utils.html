@@ -10,7 +10,7 @@
     function showToast(msg, isError = false) {
       const toast = document.getElementById('toast');
       document.getElementById('toastMsg').innerText = msg;
-      toast.className = `fixed bottom-20 md:bottom-5 right-5 text-white px-4 py-3 rounded-lg shadow-lg transition-opacity duration-300 flex items-center space-x-2 z-[110] ${isError ? 'bg-red-600' : 'bg-gray-900'}`;
+      toast.className = "fixed bottom-20 md:bottom-5 right-5 text-white px-4 py-3 rounded-lg shadow-lg transition-opacity duration-300 flex items-center space-x-2 z-[110] " + (isError ? 'bg-red-600' : 'bg-gray-900');
       toast.classList.remove('opacity-0', 'pointer-events-none');
       toast.classList.add('opacity-100');
       setTimeout(() => {
