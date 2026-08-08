@@ -56,25 +56,25 @@
       }).saveUser(null, data);
     }
     function deleteUser(username) {
-      openConfirmModal('Hapus User', "Hapus akses user " + username + "?", 'Hapus', 'bg-red-600', () => {
-        google.script.run.withSuccessHandler(res => { showToast(res.message); fetchSettings(); }).deleteUser(username);
+      openConfirmModal('Hapus User', "Hapus akses user " + username + "?", 'Hapus', 'bg-red-600', function() {
+        google.script.run.withSuccessHandler(function(res) { showToast(res.message); fetchSettings(); }).deleteUser(username);
       });
     }
-</script>
+
     // Modal Workers
     function openWorkerModal() { document.getElementById('workerModal').classList.remove('hidden'); }
     function closeWorkerModal() { document.getElementById('workerModal').classList.add('hidden'); }
     function saveWorker() {
-      const btn = document.getElementById('btnSaveWorker');
+      var btn = document.getElementById('btnSaveWorker');
       btn.innerText = 'Menyimpan...';
-      const data = {
+      var data = {
         id: document.getElementById('workerId').value,
         name: document.getElementById('workerName').value,
         email: document.getElementById('workerEmail').value,
         url: document.getElementById('workerUrl').value,
         status: document.getElementById('workerStatus').value
       };
-      google.script.run.withSuccessHandler(res => {
+      google.script.run.withSuccessHandler(function(res) {
         btn.innerText = 'Simpan';
         showToast(res.message, res.status === 'error');
         if (res.status === 'success' || res.status === 'warning') { closeWorkerModal(); fetchSettings(); fetchData(); }
@@ -117,3 +117,4 @@
         showToast('Gagal sync workers: ' + err.message, true);
       }).syncAllWorkers();
     }
+</script>

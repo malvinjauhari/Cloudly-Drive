@@ -1,7 +1,4 @@
 function verifyLogin(username, password) {
-  if (!CONFIG.SPREADSHEET_ID || !CONFIG.SECRET_KEY) {
-    return { status: "error", message: "Credentials belum di-set. Jalankan setupMasterCredentials() di GAS Editor." };
-  }
   const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
   const usersData = ss.getSheetByName("USERS").getDataRange().getValues();
   
