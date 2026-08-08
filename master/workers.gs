@@ -88,3 +88,65 @@ function deleteWorker(id) {
   }
   return { status: "error", message: "Worker tidak ditemukan" };
 }
+
+function syncAllWorkers() {
+  const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  const sheet = ss.getSheetByName("DRIVES");
+  const data = sheet.getDataRange().getValues();
+  let results = [];
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    if (row[0] === "" || !row[3]) continue;
+
+    const workerId = row[0].toString();
+    const workerUrl = row[3].toString();
+    let syncStatus = row[4] ? row[4].toString() : "UNKNOWN";
+    let syncError = "";
+    let quotaBytes = Number(row[5] || 0);
+    let usedBytes = Number(row[6] || 0);
+    let freeBytes = Number(row[7] || 0);
+    let workerEmail = row[2] ? row[2].toString() : "";
+
+    try {
+      const response = UrlFetchApp.fetch(workerUrl + "?action=info", {
+        method: 'get',
+        muteHttpExceptions: true,
+        followRedirects: true
+      });
+      const info = JSON.parse(response.getContentText());
+      if (info.status === "success") {
+        quotaBytes = parseInt(info.quota_bytes) || 0;
+        usedBytes = parseInt(info.used_bytes) || 0;
+        freeBytes = parseInt(info.free_bytes) || 0;
+        workerEmail = info.email || workerEmail;
+        syncStatus = "ONLINE";
+      } else {
+        syncStatus = "ERROR";
+        syncError = info.error || "Gagal ambil info";
+      }
+    } catch (e) {
+      syncStatus = "ERROR";
+      syncError = e.message || "Worker tidak dapat diakses";
+    }
+
+    sheet.getRange(i + 1, 5).setValue(syncStatus);
+    sheet.getRange(i + 1, 6).setValue(quotaBytes);
+    sheet.getRange(i + 1, 7).setValue(usedBytes);
+    sheet.getRange(i + 1, 8).setValue(freeBytes);
+    if (workerEmail) sheet.getRange(i + 1, 3).setValue(workerEmail);
+
+    results.push({
+      id: workerId,
+      name: row[1] ? row[1].toString() : workerId,
+      status: syncStatus,
+      error: syncError,
+      quota_bytes: quotaBytes,
+      used_bytes: usedBytes,
+      free_bytes: freeBytes
+    });
+  }
+
+  logToDatabase("ACTIVITY_LOG", [new Date(), "Admin", "Sync All Workers", results.length + " workers", "", "SUCCESS", "Quota updated"]);
+  return results;
+}

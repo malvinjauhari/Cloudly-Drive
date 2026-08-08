@@ -81,7 +81,39 @@
       }).saveWorker(null, data);
     }
     function deleteWorker(id) {
-      openConfirmModal('Hapus Worker', "Hapus konfigurasi worker " + id + "?", 'Hapus', 'bg-red-600', () => {
-        google.script.run.withSuccessHandler(res => { showToast(res.message); fetchSettings(); fetchData(); }).deleteWorker(id);
+      openConfirmModal('Hapus Worker', "Hapus konfigurasi worker " + id + "?", 'Hapus', 'bg-red-600', function() {
+        google.script.run.withSuccessHandler(function(res) { showToast(res.message); fetchSettings(); fetchData(); }).deleteWorker(id);
       });
+    }
+
+    // ==========================================
+    // SYNC ALL WORKERS
+    // ==========================================
+    function syncAllWorkers() {
+      var btn = event.target;
+      var originalText = btn.innerText;
+      btn.innerText = 'Syncing...';
+      btn.disabled = true;
+      google.script.run.withSuccessHandler(function(results) {
+        btn.innerText = originalText;
+        btn.disabled = false;
+        var online = 0, errors = 0;
+        var details = [];
+        results.forEach(function(r) {
+          if (r.status === 'ONLINE') {
+            online++;
+            details.push(r.name + ': ' + formatBytes(r.free_bytes) + ' free');
+          } else {
+            errors++;
+            details.push(r.name + ': ERROR - ' + r.error);
+          }
+        });
+        showToast(online + ' worker online, ' + errors + ' error. Quota updated.');
+        fetchSettings();
+        fetchData();
+      }).withFailureHandler(function(err) {
+        btn.innerText = originalText;
+        btn.disabled = false;
+        showToast('Gagal sync workers: ' + err.message, true);
+      }).syncAllWorkers();
     }
