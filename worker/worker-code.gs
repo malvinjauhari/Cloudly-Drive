@@ -7,8 +7,8 @@
  */
 
 const CONFIG = {
-  SECRET_KEY: 'ISI_SECRET_KEY_DISINI',
-  TARGET_FOLDER_ID: ''  // Kosongkan untuk Root Drive, atau isi Folder ID
+  SECRET_KEY: 'gsshsddyt72734fA',
+  TARGET_FOLDER_ID: '1Y83YklVGVTAa-Oamd3ClsRS0dLRSkNo_'
 };
 
 /**

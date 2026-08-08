@@ -3,7 +3,9 @@ function logToDatabase(sheetName, rowData) {
 }
 
 function byteToHex(bytes) {
-  return bytes.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+  return bytes.map(function(b) {
+    return ('0' + (b & 0xFF).toString(16)).slice(-2);
+  }).join('');
 }
 
 function handleTelegramWebhook(update) {
