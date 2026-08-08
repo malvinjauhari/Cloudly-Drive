@@ -1,3 +1,4 @@
+<script>
     // ==========================================
     // MOBILE SIDEBAR
     // ==========================================
@@ -59,7 +60,7 @@
         google.script.run.withSuccessHandler(res => { showToast(res.message); fetchSettings(); }).deleteUser(username);
       });
     }
-
+</script>
     // Modal Workers
     function openWorkerModal() { document.getElementById('workerModal').classList.remove('hidden'); }
     function closeWorkerModal() { document.getElementById('workerModal').classList.add('hidden'); }
