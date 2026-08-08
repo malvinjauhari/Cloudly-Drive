@@ -1,0 +1,180 @@
+    // ==========================================
+    // NAVIGATION BLOCKER (Upload Warning)
+    // ==========================================
+    let pendingNavAction = null;
+
+    window.addEventListener('beforeunload', (e) => {
+      if (isUploading) { e.preventDefault(); e.returnValue = ''; }
+    });
+
+    function blockNavIfUploading(action) {
+      if (isUploading) {
+        pendingNavAction = action;
+        document.getElementById('uploadWarningModal').classList.remove('hidden');
+        return true;
+      }
+      return false;
+    }
+
+    function closeUploadWarning() {
+      document.getElementById('uploadWarningModal').classList.add('hidden');
+      pendingNavAction = null;
+    }
+
+    function forceExit() {
+      document.getElementById('uploadWarningModal').classList.add('hidden');
+      isUploading = false;
+      if (pendingNavAction) { pendingNavAction(); pendingNavAction = null; }
+    }
+
+    // ==========================================
+    // GENERIC CONFIRMATION MODAL
+    // ==========================================
+    function openConfirmModal(title, desc, btnText, btnColor, action) {
+      document.getElementById('confirmModalTitle').textContent = title;
+      document.getElementById('confirmModalDesc').textContent = desc;
+      const btn = document.getElementById('btnConfirmAction');
+      btn.textContent = btnText;
+      btn.className = `px-5 py-2 text-white hover:opacity-90 rounded-lg font-medium ${btnColor}`;
+      btn.onclick = () => { closeConfirmModal(); action(); };
+      document.getElementById('confirmModal').classList.remove('hidden');
+    }
+
+    function closeConfirmModal() { document.getElementById('confirmModal').classList.add('hidden'); }
+
+    // ==========================================
+    // AUTHENTICATION
+    // ==========================================
+    window.onload = () => {
+      const user = JSON.parse(localStorage.getItem('unlidrive_user'));
+      if (user && user.isLoggedIn) {
+        document.getElementById('loginScreen').style.display = 'none';
+        applyUserProfile(user.data);
+        fetchData();
+      }
+    };
+
+    function attemptLogin() {
+      const u = document.getElementById('loginUser').value;
+      const p = document.getElementById('loginPass').value;
+      const btn = document.getElementById('btnLogin');
+      btn.innerHTML = `<div class="loader w-5 h-5 border-white border-t-blue-200"></div>`;
+      google.script.run.withSuccessHandler((res) => {
+        if (res.status === 'success') {
+          localStorage.setItem('unlidrive_user', JSON.stringify({ isLoggedIn: true, data: res.user }));
+          applyUserProfile(res.user);
+          document.getElementById('loginStep1').classList.add('hidden');
+          document.getElementById('loginStep2').classList.remove('hidden');
+          renderDriveSelection(res.drives);
+        } else {
+          btn.innerHTML = `<span>Login</span>`;
+          showToast(res.message, true);
+        }
+      }).verifyLogin(u, p);
+    }
+
+    function renderDriveSelection(drives) {
+      const list = document.getElementById('driveSelectionList');
+      list.innerHTML = `<div onclick="selectMainAccount('ALL', 'Semua Akun')" class="p-4 border border-blue-200 bg-blue-50 rounded-xl cursor-pointer hover:bg-blue-100 transition"><h3 class="font-bold text-blue-800">Tampilkan Semua Drive</h3><p class="text-xs text-blue-600">Gabungkan semua file dari semua storage</p></div>`;
+      drives.forEach(d => {
+        list.innerHTML += `<div onclick="selectMainAccount('${d.id}', '${d.name}')" class="p-4 border border-gray-200 rounded-xl cursor-pointer hover:border-blue-400 hover:shadow-sm transition"><h3 class="font-bold text-gray-900">${d.name}</h3><p class="text-xs text-gray-500">${d.email} • Free: ${formatBytes(d.free_bytes)}</p></div>`;
+      });
+    }
+
+    function selectMainAccount(id, name) {
+      localStorage.setItem('unlidrive_main_account', id);
+      localStorage.setItem('unlidrive_main_name', name);
+      activeMainAccount = id;
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('activeAccountName').innerText = name;
+      const mobileName = document.getElementById('activeAccountNameMobile');
+      if (mobileName) mobileName.innerText = name;
+      showToast("Berhasil masuk ke Dashboard");
+      fetchData();
+    }
+
+    function switchMainAccount() {
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('loginStep1').classList.add('hidden');
+      document.getElementById('loginStep2').classList.remove('hidden');
+      renderDriveSelection(appData.workers);
+    }
+
+    function logout() {
+      localStorage.removeItem('unlidrive_user');
+      localStorage.removeItem('unlidrive_main_account');
+      localStorage.removeItem('unlidrive_main_name');
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('loginStep2').classList.add('hidden');
+      document.getElementById('loginStep1').classList.remove('hidden');
+      document.getElementById('loginUser').value = '';
+      document.getElementById('loginPass').value = '';
+      document.getElementById('btnLogin').innerHTML = `<span>Login</span>`;
+    }
+
+    function confirmLogout() {
+      openConfirmModal('Logout', 'Apakah anda yakin ingin logout?', 'Logout', 'bg-red-600', logout);
+    }
+
+    function applyUserProfile(userData) {
+      document.getElementById('userNameDisplay').innerText = userData.name;
+      document.getElementById('userEmailDisplay').innerText = userData.email;
+      document.getElementById('userInitial').innerText = userData.name.charAt(0).toUpperCase();
+      const savedName = localStorage.getItem('unlidrive_main_name');
+      if (savedName) {
+        document.getElementById('activeAccountName').innerText = savedName;
+        const mobileName = document.getElementById('activeAccountNameMobile');
+        if (mobileName) mobileName.innerText = savedName;
+      }
+    }
+
+    // ==========================================
+    // VIEW SWITCHING
+    // ==========================================
+    function switchView(view) {
+      if (blockNavIfUploading(() => switchView(view))) return;
+      document.getElementById('view-files').classList.add('hidden');
+      document.getElementById('view-quota').classList.add('hidden');
+      document.getElementById('view-settings').classList.add('hidden');
+      document.getElementById('view-' + view).classList.remove('hidden');
+
+      ['files', 'quota', 'settings'].forEach(v => {
+        const desktopBtn = document.getElementById('nav-' + v);
+        const mobileBtn = document.getElementById('nav-' + v + '-mobile');
+
+        if (v === view) {
+          if (desktopBtn) desktopBtn.className = 'w-full flex items-center space-x-3 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg font-medium transition';
+          if (mobileBtn) mobileBtn.className = 'flex flex-col items-center p-2 text-blue-600';
+        } else {
+          if (desktopBtn) desktopBtn.className = 'w-full flex items-center space-x-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg font-medium transition';
+          if (mobileBtn) mobileBtn.className = 'flex flex-col items-center p-2 text-gray-500';
+        }
+      });
+
+      if (view === 'settings' || view === 'quota') fetchSettings();
+    }
+
+    function switchSettingsTab(tab) {
+      document.getElementById('settingsTab-general').classList.add('hidden');
+      document.getElementById('settingsTab-users').classList.add('hidden');
+      document.getElementById('settingsTab-workers').classList.add('hidden');
+      document.getElementById('settingsTab-' + tab).classList.remove('hidden');
+
+      ['general', 'users', 'workers'].forEach(t => {
+        const btn = document.getElementById('stab-' + t);
+        if (t === tab) btn.className = 'px-4 py-2 text-sm font-medium rounded-md bg-white text-blue-700 shadow-sm';
+        else btn.className = 'px-4 py-2 text-sm font-medium rounded-md text-gray-600 hover:text-gray-900';
+      });
+    }
+
+    // ==========================================
+    // FILE PREVIEW
+    // ==========================================
+    function openPreview(fileId, fileName) {
+      document.getElementById('previewTitle').innerText = fileName;
+      document.getElementById('previewLoader').style.display = 'flex';
+      document.getElementById('previewFrame').src = `https://drive.google.com/file/d/${fileId}/preview`;
+      document.getElementById('previewModal').classList.remove('hidden');
+    }
+
+    function closePreview() { document.getElementById('previewModal').classList.add('hidden'); document.getElementById('previewFrame').src = ''; }

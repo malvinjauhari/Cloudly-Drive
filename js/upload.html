@@ -1,0 +1,96 @@
+    // ==========================================
+    // UPLOAD & FILE MANAGEMENT
+    // ==========================================
+    function setupDragAndDrop() {
+      const overlay = document.getElementById('dragOverlay');
+      window.addEventListener('dragover', e => { e.preventDefault(); overlay.classList.remove('opacity-0', 'pointer-events-none'); });
+      window.addEventListener('dragleave', e => { if (e.clientX === 0 || e.clientY === 0) overlay.classList.add('opacity-0', 'pointer-events-none'); });
+      window.addEventListener('drop', e => {
+        e.preventDefault();
+        overlay.classList.add('opacity-0', 'pointer-events-none');
+        if (e.dataTransfer.files.length > 0) handleFilesSelected(e.dataTransfer.files);
+      });
+      document.getElementById('manualFileInput').addEventListener('change', e => {
+        if (e.target.files.length > 0) handleFilesSelected(e.target.files);
+      });
+    }
+
+    function handleFilesSelected(files) {
+      if (files.length > appSettings.maxFiles) {
+        showToast(`Maksimal ${appSettings.maxFiles} file per upload!`, true);
+        return;
+      }
+      selectedFilesToUpload = Array.from(files).filter(f => f.size <= appSettings.maxSizeMB * 1024 * 1024);
+      if (selectedFilesToUpload.length < files.length) {
+        showToast(`Beberapa file diabaikan karena melebihi ${appSettings.maxSizeMB}MB`, true);
+      }
+      if (selectedFilesToUpload.length === 0) return;
+
+      document.getElementById('uploadFileCount').innerText = selectedFilesToUpload.length;
+      const list = document.getElementById('uploadFileList');
+      list.innerHTML = selectedFilesToUpload.map(f => {
+        return `<div class="flex items-center justify-between py-1 px-2 bg-gray-50 rounded"><span class="truncate text-gray-700">${f.name}</span><span class="text-gray-400 text-xs ml-2">${formatBytes(f.size)}</span></div>`;
+      }).join('');
+      document.getElementById('uploadModal').classList.remove('hidden');
+    }
+
+    function populateUploadFilters() {
+      const catSelect = document.getElementById('modalCategory');
+      catSelect.innerHTML = appData.categories.map(c => `<option value="${c}" ${c === currentCategory ? 'selected' : ''}>${c}</option>`).join('');
+
+      const driveSelect = document.getElementById('modalDrive');
+      driveSelect.innerHTML = `<option value="AUTO">Auto (Pilih Space Terbesar)</option>` +
+        appData.workers.filter(w => w.status === 'ONLINE').map(w => `<option value="${w.id}">${w.name} (Free: ${formatBytes(w.free_bytes)})</option>`).join('');
+    }
+
+    async function startMultiUpload() {
+      document.getElementById('uploadModal').classList.add('hidden');
+      document.getElementById('uploadProgressModal').classList.remove('hidden');
+      isUploading = true;
+      const category = document.getElementById('modalCategory').value;
+      const workerId = document.getElementById('modalDrive').value;
+      const resultsDiv = document.getElementById('progressResults');
+      resultsDiv.innerHTML = '';
+      resultsDiv.classList.remove('hidden');
+      document.getElementById('btnCloseProgress').classList.add('hidden');
+
+      for (let i = 0; i < selectedFilesToUpload.length; i++) {
+        if (!isUploading) break;
+        const file = selectedFilesToUpload[i];
+        document.getElementById('progressCount').innerText = `${i + 1}/${selectedFilesToUpload.length}`;
+        document.getElementById('progressFileName').innerText = file.name;
+        document.getElementById('progressBar').style.width = `${((i + 1) / selectedFilesToUpload.length) * 100}%`;
+        document.getElementById('progressStatus').innerText = "Membaca file...";
+
+        try {
+          const base64Data = await readFileAsBase64(file);
+          document.getElementById('progressStatus').innerText = "Mengunggah...";
+          const res = await new Promise((resolve) => {
+            google.script.run.withSuccessHandler(resolve).withFailureHandler(() => resolve({ status: 'error', message: 'Upload timeout' })).processUploadFromWeb(file.name, file.type, base64Data.split(',')[1], workerId === 'AUTO' ? 'AUTO' : 'SPECIFIC', workerId === 'AUTO' ? null : workerId, category);
+          });
+          resultsDiv.innerHTML += `<div class="text-${res.status === 'success' ? 'green' : 'red'}-600">✓ ${file.name}: ${res.message}</div>`;
+        } catch (e) {
+          resultsDiv.innerHTML += `<div class="text-red-600">✕ ${file.name}: Gagal upload</div>`;
+        }
+      }
+
+      isUploading = false;
+      document.getElementById('progressStatus').innerText = "Selesai!";
+      document.getElementById('btnCloseProgress').classList.remove('hidden');
+      document.getElementById('manualFileInput').value = '';
+      fetchData();
+    }
+
+    function readFileAsBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function closeUploadModal() { document.getElementById('uploadModal').classList.add('hidden'); }
+    function closeProgressModal() { document.getElementById('uploadProgressModal').classList.add('hidden'); }
+    function cancelDelete() { deleteAborted = true; }
+    function deleteFileSingle(fileId) { toggleFileSelect(fileId); bulkDeleteFiles(); }

@@ -1,0 +1,124 @@
+    // ==========================================
+    // FILE SELECTION (Bulk Operations)
+    // ==========================================
+    function getFilteredFiles() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      return appData.files.filter(f => {
+        const matchSearch = (f.file_name || "").toLowerCase().includes(search);
+        const matchStorage = (activeMainAccount === 'ALL') || (f.worker_id === activeMainAccount);
+        const matchCategory = currentCategory === "" || f.category === currentCategory;
+        return matchSearch && matchStorage && matchCategory;
+      });
+    }
+
+    function toggleFileSelect(fileId) {
+      const idx = selectedFileIds.indexOf(fileId);
+      if (idx > -1) selectedFileIds.splice(idx, 1);
+      else selectedFileIds.push(fileId);
+      updateBulkActionBar();
+      updateSelectAllState();
+    }
+
+    function toggleSelectAll() {
+      const visibleFiles = getFilteredFiles();
+      const allSelected = visibleFiles.length > 0 && visibleFiles.every(f => selectedFileIds.includes(f.file_id));
+      if (allSelected) {
+        visibleFiles.forEach(f => { const i = selectedFileIds.indexOf(f.file_id); if (i > -1) selectedFileIds.splice(i, 1); });
+      } else {
+        visibleFiles.forEach(f => { if (!selectedFileIds.includes(f.file_id)) selectedFileIds.push(f.file_id); });
+      }
+      renderFiles();
+      updateBulkActionBar();
+    }
+
+    function updateSelectAllState() {
+      const cb = document.getElementById('selectAllFiles');
+      if (!cb) return;
+      const visibleFiles = getFilteredFiles();
+      cb.checked = visibleFiles.length > 0 && visibleFiles.every(f => selectedFileIds.includes(f.file_id));
+    }
+
+    function updateBulkActionBar() {
+      const bar = document.getElementById('bulkActionBar');
+      const count = document.getElementById('bulkSelectedCount');
+      if (selectedFileIds.length === 0) { bar.classList.add('hidden'); return; }
+      bar.classList.remove('hidden');
+      count.textContent = `${selectedFileIds.length} file dipilih`;
+      if (window.innerWidth < 768) bar.style.bottom = '56px';
+      else bar.style.bottom = '0';
+    }
+
+    function clearSelection() {
+      selectedFileIds = [];
+      renderFiles();
+      updateBulkActionBar();
+    }
+
+    // ==========================================
+    // BULK DELETE
+    // ==========================================
+    function bulkDeleteFiles() {
+      const count = selectedFileIds.length;
+      openConfirmModal('Hapus File', `Hapus ${count} file secara permanen?`, 'Hapus', 'bg-red-600', () => {
+        const snackbar = document.getElementById('deleteSnackbar');
+        const msgEl = document.getElementById('deleteSnackbarMsg');
+        const loader = document.getElementById('deleteSnackbarLoader');
+        snackbar.classList.remove('hidden', 'snackbar-exit');
+        snackbar.classList.add('snackbar-enter');
+        msgEl.textContent = `Menghapus ${count} file...`;
+        loader.className = 'loader-white';
+        const filesToDelete = [...selectedFileIds];
+        clearSelection();
+        google.script.run.withSuccessHandler((res) => {
+          loader.className = 'hidden';
+          msgEl.textContent = `✓ ${res.success} file dihapus, ${res.failed} gagal`;
+          setTimeout(() => { snackbar.classList.add('hidden'); fetchData(); }, 2000);
+        }).withFailureHandler((err) => {
+          loader.className = 'hidden';
+          msgEl.textContent = '✕ Gagal menghapus file';
+          setTimeout(() => { snackbar.classList.add('hidden'); }, 3000);
+        }).bulkDeleteFiles(filesToDelete);
+      });
+    }
+
+    // ==========================================
+    // BULK DOWNLOAD ZIP (Client-side JSZip)
+    // ==========================================
+    function bulkDownloadZip() {
+      if (bulkDownloading) return;
+      bulkDownloading = true;
+      const count = selectedFileIds.length;
+      const bar = document.getElementById('bulkActionBar');
+      const downloadBtn = bar.querySelector('[onclick="bulkDownloadZip()"]');
+      const originalText = downloadBtn.textContent;
+      downloadBtn.innerHTML = '<span class="loader-sm mr-1"></span> Menyiapkan...';
+      downloadBtn.disabled = true;
+      google.script.run.withSuccessHandler((res) => {
+        if (res.status !== 'success') {
+          showToast(res.message, true);
+          downloadBtn.textContent = originalText;
+          downloadBtn.disabled = false;
+          bulkDownloading = false;
+          return;
+        }
+        const zip = new JSZip();
+        res.blobs.forEach(f => { zip.file(f.name, f.data, { base64: true }); });
+        zip.generateAsync({ type: 'blob' }).then(blob => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `unlidrive_${new Date().toISOString().slice(0, 10)}.zip`;
+          a.click();
+          URL.revokeObjectURL(url);
+          showToast(`${count} file berhasil di-zip`);
+          downloadBtn.textContent = originalText;
+          downloadBtn.disabled = false;
+          bulkDownloading = false;
+        });
+      }).withFailureHandler((err) => {
+        showToast('Gagal membuat ZIP', true);
+        downloadBtn.textContent = originalText;
+        downloadBtn.disabled = false;
+        bulkDownloading = false;
+      }).bulkGetFileBlobs([...selectedFileIds]);
+    }

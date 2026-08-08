@@ -1,0 +1,58 @@
+    // ==========================================
+    // STATE
+    // ==========================================
+    let appData = { files: [], workers: [], categories: [], totalQuota: 0, totalUsed: 0, totalFree: 0 };
+    let appSettings = { maxFiles: 10, maxSizeMB: 50, categories: [] };
+    let currentCategory = "";
+    let selectedFilesToUpload = [];
+    let activeMainAccount = localStorage.getItem('unlidrive_main_account') || "ALL";
+    let settingsUsers = [];
+    let settingsWorkers = [];
+    let activityLogs = [];
+    let isUploading = false;
+    let deleteAborted = false;
+    let selectedFileIds = [];
+    let bulkDownloading = false;
+
+    // ==========================================
+    // DATA FETCHING
+    // ==========================================
+    function fetchData() {
+      google.script.run.withFailureHandler((err) => {
+        document.getElementById('conn-status').className = 'text-xs px-2 py-1 bg-red-100 text-red-700 rounded-full font-medium';
+        document.getElementById('conn-status').innerText = 'Error Connection';
+        showToast("Gagal memuat data", true);
+      }).withSuccessHandler((data) => {
+        appData = data;
+        document.getElementById('conn-status').className = 'text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium';
+        document.getElementById('conn-status').innerText = 'Connected';
+        renderCategories();
+        populateUploadFilters();
+        renderFiles();
+        renderQuotaTracker();
+        setupDragAndDrop();
+      }).getAppData();
+    }
+
+    function fetchSettings() {
+      google.script.run.withSuccessHandler((data) => {
+        appSettings = data;
+        document.getElementById('setMaxFiles').value = appSettings.maxFiles;
+        document.getElementById('setMaxSizeMB').value = appSettings.maxSizeMB;
+      }).getSettings();
+
+      google.script.run.withSuccessHandler((users) => {
+        settingsUsers = users;
+        renderUsersTable();
+      }).getUsers();
+
+      google.script.run.withSuccessHandler((workers) => {
+        settingsWorkers = workers;
+        renderWorkersTable();
+      }).getWorkers();
+
+      google.script.run.withSuccessHandler((logs) => {
+        activityLogs = logs;
+        renderActivityLog();
+      }).getActivityLogs();
+    }

@@ -1,0 +1,86 @@
+    // ==========================================
+    // MOBILE SIDEBAR
+    // ==========================================
+    function openMobileSidebar() {
+      const sidebar = document.getElementById('desktopSidebar');
+      sidebar.classList.remove('hidden');
+      sidebar.classList.add('mobile-sidebar-open');
+      document.getElementById('mobileSidebarOverlay').classList.remove('hidden');
+    }
+
+    function closeMobileSidebar() {
+      const sidebar = document.getElementById('desktopSidebar');
+      sidebar.classList.remove('mobile-sidebar-open');
+      sidebar.classList.add('hidden');
+      document.getElementById('mobileSidebarOverlay').classList.add('hidden');
+    }
+
+    // ==========================================
+    // SETTINGS / CRUD FUNCTIONS
+    // ==========================================
+    function saveGeneralSettings() {
+      const maxF = document.getElementById('setMaxFiles').value;
+      const maxS = document.getElementById('setMaxSizeMB').value;
+      google.script.run.withSuccessHandler(res => {
+        showToast(res.message, res.status === 'error');
+        if (res.status === 'success') fetchSettings();
+      }).saveSettings({ maxFiles: maxF, maxSizeMB: maxS });
+    }
+
+    function saveNewCategory() {
+      const cat = document.getElementById('newCategoryName').value;
+      if (!cat) return;
+      google.script.run.withSuccessHandler(res => {
+        document.getElementById('addCategoryModal').classList.add('hidden');
+        document.getElementById('newCategoryName').value = '';
+        fetchData();
+        showToast(res.message, res.status === 'error');
+      }).addCategory(cat);
+    }
+
+    // Modal Users
+    function openUserModal() { document.getElementById('userModal').classList.remove('hidden'); }
+    function closeUserModal() { document.getElementById('userModal').classList.add('hidden'); }
+    function saveUser() {
+      const data = {
+        username: document.getElementById('userUsername').value,
+        password: document.getElementById('userPassword').value,
+        name: document.getElementById('userFullName').value,
+        email: document.getElementById('userEmail').value,
+        role: document.getElementById('userRole').value
+      };
+      google.script.run.withSuccessHandler(res => {
+        showToast(res.message, res.status === 'error');
+        if (res.status === 'success') { closeUserModal(); fetchSettings(); }
+      }).saveUser(null, data);
+    }
+    function deleteUser(username) {
+      openConfirmModal('Hapus User', `Hapus akses user ${username}?`, 'Hapus', 'bg-red-600', () => {
+        google.script.run.withSuccessHandler(res => { showToast(res.message); fetchSettings(); }).deleteUser(username);
+      });
+    }
+
+    // Modal Workers
+    function openWorkerModal() { document.getElementById('workerModal').classList.remove('hidden'); }
+    function closeWorkerModal() { document.getElementById('workerModal').classList.add('hidden'); }
+    function saveWorker() {
+      const btn = document.getElementById('btnSaveWorker');
+      btn.innerText = 'Menyimpan...';
+      const data = {
+        id: document.getElementById('workerId').value,
+        name: document.getElementById('workerName').value,
+        email: document.getElementById('workerEmail').value,
+        url: document.getElementById('workerUrl').value,
+        status: document.getElementById('workerStatus').value
+      };
+      google.script.run.withSuccessHandler(res => {
+        btn.innerText = 'Simpan';
+        showToast(res.message, res.status === 'error');
+        if (res.status === 'success' || res.status === 'warning') { closeWorkerModal(); fetchSettings(); fetchData(); }
+      }).saveWorker(null, data);
+    }
+    function deleteWorker(id) {
+      openConfirmModal('Hapus Worker', `Hapus konfigurasi worker ${id}?`, 'Hapus', 'bg-red-600', () => {
+        google.script.run.withSuccessHandler(res => { showToast(res.message); fetchSettings(); fetchData(); }).deleteWorker(id);
+      });
+    }
