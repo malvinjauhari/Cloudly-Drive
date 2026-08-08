@@ -196,6 +196,56 @@ const CONFIG = {
 5. Deploy → **Deployment baru** → **Web App**
 6. Buka Web App URL dan login!
 
+## 🚀 Setup Cepat (Copy & Paste)
+
+Untuk setup tercepat, download file yang sudah siap pakai dari Google Drive:
+
+**[📁 Download File Setup](https://drive.google.com/drive/u/0/folders/1TyaZTNGFIV0NlMmXzEjRK0pMg2l7HLap)**
+
+### Setup Master
+
+1. Buka link di atas → download **`Cloudly master.txt`**
+2. Buka [script.google.com](https://script.google.com) dengan akun Master kamu
+3. Buat Proyek Baru → buka `Code.gs`
+4. **Select all** (Ctrl+A) → **Hapus** → **Paste** isi `Cloudly master.txt`
+5. Edit bagian CONFIG di atas:
+
+```javascript
+const CONFIG = {
+  SPREADSHEET_ID: 'ID_SPREADSHEET_KAMU',
+  SECRET_KEY: 'SECRET_KEY_KAMU'
+};
+```
+
+6. Rename file ke `app.gs`
+7. Buat file lainnya (`auth.gs`, `dashboard.gs`, dll) dari folder `master/`
+8. Deploy → Deployment baru → Web App
+
+### Setup Worker
+
+1. Buka link di atas → download **`Cloudly worker.txt`**
+2. Buka [script.google.com](https://script.google.com) dengan akun Worker kamu
+3. Buat Proyek Baru → buka `Code.gs`
+4. **Select all** (Ctrl+A) → **Hapus** → **Paste** isi `Cloudly worker.txt`
+5. Edit bagian CONFIG di atas:
+
+```javascript
+const CONFIG = {
+  SECRET_KEY: 'SECRET_KEY_KAMU',        // HARUS SAMA DENGAN MASTER
+  TARGET_FOLDER_ID: ''                  // Kosong = Root Drive
+};
+```
+
+6. Tambah **Drive API**: Services (+) → Drive API → Add
+7. Deploy → Deployment baru → Web App → salin URL-nya
+
+### Setup Spreadsheet
+
+1. Buka link di atas → download **`Cloudly Drive Config.xlsx`** (atau pakai file dari `assets/`)
+2. Buat salinan ke Google Drive kamu
+3. Edit sheet USERS, DRIVES, dan SETTINGS
+4. Copy Spreadsheet ID dari URL dan paste ke CONFIG Master
+
 ## ⚙️ Konfigurasi
 
 ### Master CONFIG (`app.gs`)
