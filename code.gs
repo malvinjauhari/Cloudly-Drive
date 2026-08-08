@@ -7,8 +7,12 @@
  */
 
 const CONFIG = {
-  SPREADSHEET_ID: "1R_ByEhTxh9rdrJFz40g8LFSduEKCW3vu_ZlODnnFGd0", 
-  SECRET_KEY: "R4hasiaWorkerSatu2026!"
+  get SPREADSHEET_ID() {
+    return PropertiesService.getScriptProperties().getProperty('SPREADSHEET_ID');
+  },
+  get SECRET_KEY() {
+    return PropertiesService.getScriptProperties().getProperty('SECRET_KEY');
+  }
 };
 
 // ==========================================
